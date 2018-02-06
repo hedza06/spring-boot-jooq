@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.springboot</groupId>
+	<artifactId>jooq</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>jooq</name>
+	<description>Spring Boot With Flyway and JOOQ ORM.</description>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.10.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jooq</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<db.url>jdbc:mysql://localhost:3306/jooq?characterEncoding=utf-8&amp;useSSL=false</db.url>
+				<db.schema>jooq</db.schema>
+				<db.usr>root</db.usr>
+				<db.pwd>root</db.pwd>
+				<spring.profile.active>dev</spring.profile.active>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.flywaydb</groupId>
+						<artifactId>flyway-maven-plugin</artifactId>
+						<version>4.2.0</version>
+						<executions>
+							<execution>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>migrate</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<url>${db.url}</url>
+							<user>${db.usr}</user>
+							<password>${db.pwd}</password>
+							<locations>
+								<location>filesystem:src/main/resources/migrations</location>
+							</locations>
+                            <baselineOnMigrate>true</baselineOnMigrate>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.jooq</groupId>
+						<artifactId>jooq-codegen-maven</artifactId>
+						<executions>
+							<execution>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>mysql</groupId>
+								<artifactId>mysql-connector-java</artifactId>
+								<version>${mysql.version}</version>
+							</dependency>
+						</dependencies>
+						<configuration>
+							<jdbc>
+								<driver>com.mysql.jdbc.Driver</driver>
+								<url>${db.url}</url>
+								<user>${db.usr}</user>
+								<password>${db.pwd}</password>
+							</jdbc>
+							<generator>
+								<database>
+									<name>org.jooq.util.mysql.MySQLDatabase</name>
+									<includes>.*</includes>
+									<excludes />
+									<inputSchema>${db.schema}</inputSchema>
+								</database>
+								<target>
+									<packageName>com.springboot.sources</packageName>
+									<directory>src/main/java</directory>
+								</target>
+								<generate>
+									<pojos>true</pojos>
+									<validationAnnotations>true</validationAnnotations>
+								</generate>
+							</generator>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<db.url>jdbc:mysql://localhost:3306/jooq?characterEncoding=utf-8&amp;useSSL=false</db.url>
+				<db.schema>jooq</db.schema>
+				<db.usr>${db.usr}</db.usr>
+				<db.pwd>${db.pwd}</db.pwd>
+				<spring.profile.active>prod</spring.profile.active>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>org.flywaydb</groupId>
+					<artifactId>flyway-core</artifactId>
+					<version>4.2.0</version>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+</project>
