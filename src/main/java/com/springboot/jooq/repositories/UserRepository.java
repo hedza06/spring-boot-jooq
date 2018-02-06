@@ -142,12 +142,13 @@ public class UserRepository {
      */
     private UserWithPostModel mapUserWithPost(Map<UserModel, List<PostModel>> data)
     {
-        UserWithPostModel userWithPostModel = new UserWithPostModel();
-        userWithPostModel.setUserModel((UserModel) data.keySet().toArray()[0]);
-
+        // get post model data
         List<PostModel> postModelList = new ArrayList<>();
         data.values().forEach(postList -> postModelList.addAll(postList));
 
+        // generate user with post data model.
+        UserWithPostModel userWithPostModel = new UserWithPostModel();
+        userWithPostModel.setUserModel((UserModel) data.keySet().toArray()[0]);
         userWithPostModel.setPostModelList(postModelList);
 
         return userWithPostModel;
