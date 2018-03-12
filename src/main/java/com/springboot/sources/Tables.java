@@ -4,8 +4,8 @@
 package com.springboot.sources;
 
 
+import com.springboot.sources.tables.FlywaySchemaHistory;
 import com.springboot.sources.tables.Post;
-import com.springboot.sources.tables.SchemaVersion;
 import com.springboot.sources.tables.User;
 
 import javax.annotation.Generated;
@@ -25,14 +25,14 @@ import javax.annotation.Generated;
 public class Tables {
 
     /**
+     * The table <code>jooq.flyway_schema_history</code>.
+     */
+    public static final FlywaySchemaHistory FLYWAY_SCHEMA_HISTORY = com.springboot.sources.tables.FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY;
+
+    /**
      * The table <code>jooq.post</code>.
      */
     public static final Post POST = com.springboot.sources.tables.Post.POST;
-
-    /**
-     * The table <code>jooq.schema_version</code>.
-     */
-    public static final SchemaVersion SCHEMA_VERSION = com.springboot.sources.tables.SchemaVersion.SCHEMA_VERSION;
 
     /**
      * The table <code>jooq.user</code>.

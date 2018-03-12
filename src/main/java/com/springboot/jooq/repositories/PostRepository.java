@@ -1,9 +1,15 @@
 package com.springboot.jooq.repositories;
 
 import com.springboot.jooq.model.PostModel;
+import com.springboot.jooq.utils.model.PageableModel;
+import com.springboot.sources.Routines;
 import com.springboot.sources.tables.pojos.User;
+import com.springboot.sources.tables.records.PostRecord;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.impl.DSL;
+import org.jooq.types.UInteger;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Repository;
 
@@ -38,6 +44,88 @@ public class PostRepository {
                 .from(POST)
                 .innerJoin(USER).on(POST.USER_ID.eq(USER.ID))
                 .fetch().map(this::mapPostRecord);
+    }
+
+    /**
+     * Method for getting filtered posts
+     *
+     * @param pageableModel - contains page, sort and filter data
+     * @return list of post models
+     */
+    public List<PostModel> findFiltered(PageableModel pageableModel)
+    {
+        return dslContext
+                .select(POST.ID, POST.TITLE, POST.PUBLISHED_AT, USER.ID, USER.FIRST_NAME, USER.LAST_NAME, USER.AGE)
+                .from(POST)
+                .innerJoin(USER).on(POST.USER_ID.eq(USER.ID))
+                .where(pageableModel.getFilters())
+                .orderBy(pageableModel.getSortFields())
+                .limit(pageableModel.getPage().getLimit())
+                .offset(pageableModel.getPage().getOffset())
+                .fetch().map(this::mapPostRecord);
+    }
+
+    /**
+     * Method for counting filtered methods.
+     *
+     * @param filters - dynamic where parameters
+     * @return total count of filtered rows.
+     */
+    public Integer countFiltered(List<Condition> filters)
+    {
+        return dslContext
+                .selectCount()
+                .from(POST)
+                .innerJoin(USER).on(POST.USER_ID.eq(USER.ID))
+                .where(filters)
+                .fetchOneInto(Integer.class);
+    }
+
+    /**
+     * Method for storing post in transaction.
+     *
+     * @param postModel - post data
+     * @return post model or null
+     */
+    public PostModel storeTransactional(PostModel postModel)
+    {
+        try
+        {
+            dslContext.transaction(configuration -> {
+
+                // insert post record
+                PostRecord postRecord = DSL.using(configuration)
+                        .insertInto(POST, POST.TITLE, POST.USER_ID)
+                        .values(postModel.getTitle(), postModel.getUser().getId())
+                        .returning()
+                        .fetchOne();
+
+                // dummy transaction that makes error
+                DSL.using(configuration)
+                        .insertInto(USER, USER.ID)
+                        .values(UInteger.valueOf(20))
+                        .execute();
+
+                // setting post model new id.
+                postModel.setId(postRecord.getId().intValue());
+            });
+            return postModel;
+        }
+        catch (Exception e)
+        {
+            // log exception if needed
+            return null;
+        }
+    }
+
+    /**
+     * Method for getting post count from provided post title
+     *
+     * @param postTitle - provided post title
+     * @return post count by provided title
+     */
+    public Integer handleProcedure(String postTitle) {
+        return Routines.postProcedure(dslContext.configuration(), postTitle);
     }
 
     /**

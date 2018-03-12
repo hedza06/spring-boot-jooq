@@ -4,8 +4,8 @@
 package com.springboot.sources;
 
 
+import com.springboot.sources.tables.FlywaySchemaHistory;
 import com.springboot.sources.tables.Post;
-import com.springboot.sources.tables.SchemaVersion;
 import com.springboot.sources.tables.User;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Jooq extends SchemaImpl {
 
-    private static final long serialVersionUID = -1105523264;
+    private static final long serialVersionUID = 2062815006;
 
     /**
      * The reference instance of <code>jooq</code>
@@ -40,14 +40,14 @@ public class Jooq extends SchemaImpl {
     public static final Jooq JOOQ = new Jooq();
 
     /**
+     * The table <code>jooq.flyway_schema_history</code>.
+     */
+    public final FlywaySchemaHistory FLYWAY_SCHEMA_HISTORY = com.springboot.sources.tables.FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY;
+
+    /**
      * The table <code>jooq.post</code>.
      */
     public final Post POST = com.springboot.sources.tables.Post.POST;
-
-    /**
-     * The table <code>jooq.schema_version</code>.
-     */
-    public final SchemaVersion SCHEMA_VERSION = com.springboot.sources.tables.SchemaVersion.SCHEMA_VERSION;
 
     /**
      * The table <code>jooq.user</code>.
@@ -79,8 +79,8 @@ public class Jooq extends SchemaImpl {
 
     private final List<Table<?>> getTables0() {
         return Arrays.<Table<?>>asList(
+            FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY,
             Post.POST,
-            SchemaVersion.SCHEMA_VERSION,
             User.USER);
     }
 }
