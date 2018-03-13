@@ -74,18 +74,10 @@ public class PostResource {
     @PostMapping(value = "/procedure-call", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> storeProcExample(@RequestBody Map<String, Object> postParams)
     {
-        try
-        {
-            String postTitle = String.valueOf(postParams.get("title"));
-            Integer numberOfPosts = postService.handleProcedureCall(postTitle);
+        String postTitle = String.valueOf(postParams.get("title"));
+        Integer numberOfPosts = postService.handleProcedureCall(postTitle);
 
-            return new ResponseEntity<>(numberOfPosts, HttpStatus.OK);
-        }
-        catch (NullPointerException e)
-        {
-            LOGGER.error("Null pointer exception occurred. Cause: {}", e.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(numberOfPosts, HttpStatus.OK);
     }
 
 
