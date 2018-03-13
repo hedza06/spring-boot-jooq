@@ -8,7 +8,7 @@ Spring Boot project with Flyway tools for database migrations and JOOQ ORM.
 1. Create database with name **jooq**
 2. Open terminal and navigate to your project
 3. Type command **mvn install**
-4. Type command **mvn spring-boot:run**
+4. Type command **java -jar target/jooq-0.0.1-SNAPSHOT.jar**
 
 
 ## Packaging application
