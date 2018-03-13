@@ -13,7 +13,7 @@ Spring Boot project with Flyway tools for database migrations and JOOQ ORM.
 
 ## Packaging application
   
-**mvn clean package**
+**mvn clean package -Pprod**
 
 ## Running tests
 **mvn test**
