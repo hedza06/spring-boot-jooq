@@ -8,6 +8,7 @@ import com.springboot.sources.tables.records.PostRecord;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.ResultQuery;
 import org.jooq.impl.DSL;
 import org.jooq.types.UInteger;
 import org.springframework.context.annotation.Description;
@@ -126,6 +127,27 @@ public class PostRepository {
      */
     public Integer handleProcedure(String postTitle) {
         return Routines.postProcedure(dslContext.configuration(), postTitle);
+    }
+
+    /**
+     * Method for getting post by native query
+     *
+     * @param id - post identifier
+     * @return PostModel
+     */
+    public PostModel findOneByNative(Integer id)
+    {
+        String rawQuery = "SELECT post.id, post.title, post.published_at, user.id, " +
+                "user.first_name, user.last_name, user.age " +
+                "FROM post JOIN user ON post.user_id = user.id " +
+                "WHERE post.id = :id";
+
+        ResultQuery<Record> resultQuery = dslContext.resultQuery(rawQuery, DSL.param("id"));
+        resultQuery.bind("id", UInteger.valueOf(id));
+
+        Record record = resultQuery.fetchOne();
+
+        return mapPostRecord(record);
     }
 
     /**

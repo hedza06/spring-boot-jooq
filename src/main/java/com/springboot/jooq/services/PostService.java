@@ -91,6 +91,16 @@ public class PostService {
     }
 
     /**
+     * Method for getting specific post by native query
+     *
+     * @param id - post identifier
+     * @return post model object
+     */
+    public PostModel findOneByNative(Integer id) {
+        return postRepository.findOneByNative(id);
+    }
+
+    /**
      * Method for generating sort fields
      *
      * @param sort - provided sort object

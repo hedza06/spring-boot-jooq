@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -85,5 +86,15 @@ public class PostResource {
             LOGGER.error("Null pointer exception occurred. Cause: {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+
+    @GetMapping(value = "/native-query/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PostModel> nativeQueryExample(@PathVariable(value = "id") Integer id)
+    {
+        PostModel postModel = postService.findOneByNative(id);
+        return Optional.ofNullable(postModel)
+                .map(post -> new ResponseEntity<>(post, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
