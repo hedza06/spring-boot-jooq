@@ -130,6 +130,23 @@ public class PostRepository {
     }
 
     /**
+     * Method for getting all posts by native query
+     *
+     * @return list of post model objects
+     */
+    public List<PostModel> findAllNative()
+    {
+        String rawQuery = "SELECT post.id, post.title, post.published_at, user.id, " +
+                "user.first_name, user.last_name, user.age " +
+                "FROM post JOIN user ON post.user_id = user.id";
+
+        ResultQuery<Record> resultQuery = dslContext.resultQuery(rawQuery);
+        return resultQuery
+                .fetch()
+                .map(this::mapPostRecord);
+    }
+
+    /**
      * Method for getting post by native query
      *
      * @param id - post identifier
@@ -145,8 +162,9 @@ public class PostRepository {
         ResultQuery<Record> resultQuery = dslContext.resultQuery(rawQuery, DSL.param("id"));
         resultQuery.bind("id", UInteger.valueOf(id));
 
-        Record record = resultQuery.fetchOne();
-        return mapPostRecord(record);
+        return resultQuery
+                .fetchOne()
+                .map(this::mapPostRecord);
     }
 
     /**

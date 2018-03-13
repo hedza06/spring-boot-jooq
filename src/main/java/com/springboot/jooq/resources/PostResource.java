@@ -81,8 +81,18 @@ public class PostResource {
     }
 
 
+    @GetMapping(value = "/native-query", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<PostModel>> nativeQueryAll()
+    {
+        List<PostModel> postModelList = postService.findAllNative();
+        return Optional.ofNullable(postModelList)
+                .map(postModels -> new ResponseEntity<>(postModels, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+
     @GetMapping(value = "/native-query/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PostModel> nativeQueryExample(@PathVariable(value = "id") Integer id)
+    public ResponseEntity<PostModel> nativeQueryOne(@PathVariable(value = "id") Integer id)
     {
         PostModel postModel = postService.findOneByNative(id);
         return Optional.ofNullable(postModel)

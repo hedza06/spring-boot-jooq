@@ -91,6 +91,15 @@ public class PostService {
     }
 
     /**
+     * Method for getting posts by native query
+     *
+     * @return list of post models
+     */
+    public List<PostModel> findAllNative() {
+        return postRepository.findAllNative();
+    }
+
+    /**
      * Method for getting specific post by native query
      *
      * @param id - post identifier
