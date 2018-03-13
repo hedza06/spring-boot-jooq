@@ -59,13 +59,13 @@ public class PostResource {
 
 
     @PostMapping(value = "/transaction", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PostModel> transactionExample(@RequestBody @Valid PostModel postModel)
+    public ResponseEntity<PostModel> transactionExample(@RequestBody @Valid PostModel postModel) throws Exception
     {
         PostModel postModelInserted = postService.storeTransactionalPost(postModel);
         if (postModelInserted == null)
         {
             LOGGER.error("Transactional exception occurred. Returning internal server error.");
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new Exception("Error trying to insert post. Transactional exception occurred.");
         }
         return new ResponseEntity<>(postModelInserted, HttpStatus.CREATED);
     }
