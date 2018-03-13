@@ -146,7 +146,6 @@ public class PostRepository {
         resultQuery.bind("id", UInteger.valueOf(id));
 
         Record record = resultQuery.fetchOne();
-
         return mapPostRecord(record);
     }
 
